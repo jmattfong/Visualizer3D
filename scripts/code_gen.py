@@ -13,19 +13,23 @@ from os.path import isfile, isdir, join, exists
 from string import Template
 
 def main() :
-    if len(sys.argv) < 3  :
-        print 'Usage :', sys.argv[0], '<resource_dir> <out_dir>'
+    if len(sys.argv) < 5  :
+        print 'Usage :', sys.argv[0], '<resource_dir> <out_dir> <class_name> <package>'
         exit(1)
 
     res_parent_dir = sys.argv[1]
     out_dir = sys.argv[2]
-    generated_class = generate(res_parent_dir, out_dir)
+    class_name = sys.argv[3]
+    package = sys.argv[4]
+
+    generated_class = generate(res_parent_dir, class_name, package)
+    out_dir = join(*([out_dir] + package.split('.')))
     if not exists(out_dir):
         makedirs(out_dir)
-    out = open(join(out_dir, 'R.java'), 'w')
+    out = open(join(out_dir, class_name + '.java'), 'w')
     out.write(generated_class)
 
-def generate(res_parent_dir, out_dir) :
+def generate(res_parent_dir, class_name, package) :
     enums = ''
     for res_dir in listdir(res_parent_dir) :
         res_dir_path = join(res_parent_dir, res_dir)
@@ -43,30 +47,43 @@ def generate(res_parent_dir, out_dir) :
                 exit(3)
 
             enum_value_name = res_file.split('.')[0]
-            enum_values += ENUM_VALUE.substitute(name=enum_value_name)
+            enum_values += ENUM_VALUE.substitute(name=enum_value_name, path=join(res_dir, res_file))
 
         enums += ENUM_TEMPLATE.substitute(name=res_dir, contents=enum_values)
 
-    return MAIN_TEMPLATE.substitute(file_name='R.java', script_name=sys.argv[0], contents=enums)
+    return MAIN_TEMPLATE.substitute(class_name=class_name, script_name=sys.argv[0], enums=enums, package=package)
 
-MAIN_TEMPLATE = Template("""/**
- * ${file_name}
+MAIN_TEMPLATE = Template("""package ${package};
+/**
+ * ${class_name}.java
  *
  * THIS FILE IS GENERATED. DO NOT MODIFY.
  * See ${script_name}
  */
 
-public class R {
-    ${contents}
+public final class ${class_name} {
+    ${enums}
+    private ${class_name}() {}
 }
 """)
 
 ENUM_TEMPLATE = Template("""
-    public enum ${name} {${contents}
+    public enum ${name} implements Resource {${contents}
+        ;
+
+        public final String path;
+        private ${name}(String path) {
+            this.path = path;
+        }
+
+        @Override
+        public String getPath() {
+            return this.path;
+        }
     }
 """)
 
 ENUM_VALUE = Template("""
-        ${name},""")
+        ${name}("${path}"),""")
 
 if __name__ == "__main__" : main()

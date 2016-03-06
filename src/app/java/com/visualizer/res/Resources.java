@@ -6,7 +6,7 @@
  *
  * Copyright (C) 2016, Matthew Fong
  */
-package com.visualizer.util;
+package com.visualizer.res;
 
 import java.awt.Image;
 import java.io.IOException;
@@ -16,11 +16,14 @@ import javax.imageio.ImageIO;
 
 public class Resources {
 
-	public static Image getImage(String name) {
+	public static Image getImage(Resource res) {
 		Image img = null;
 		try {
-			img = ImageIO.read(Resources.class.getResource(name));
+			System.out.println("img: " + img);
+			img = ImageIO.read(Resources.class.getResource(res.getPath()));
+			System.out.println("img2: " + img);
 		} catch (IOException e) {
+			System.out.println("caught exception: " + e);
 			throw new UncheckedIOException(e);
 		}
 		return img;

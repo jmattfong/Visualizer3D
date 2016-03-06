@@ -1,1 +1,24 @@
 apply plugin: 'java'
+
+sourceSets {
+    app.java.srcDirs += 'src/gen/java'
+}
+
+ext.sharedManifest = manifest {
+    attributes("Implementation-Title": "Gradle",
+               "Implementation-Version": "1.0")
+}
+
+jar {
+    manifest {
+        from sharedManifest
+    }
+}
+
+task appJar(type: Jar) {
+    from sourceSets.app.output
+    manifest {
+        attributes "Main-Class": "com.visualizer.Main"
+        from sharedManifest
+    }
+}
