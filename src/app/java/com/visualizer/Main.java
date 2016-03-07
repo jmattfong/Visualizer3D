@@ -8,29 +8,11 @@
  */
 package com.visualizer;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.visualizer.res.R;
-import com.visualizer.ui.ImagePanel;
+import com.visualizer.ui.Visualizer;
 
 public class Main {
-	/**
-	 * Create the GUI and show it. For thread safety, this method should be
-	 * invoked from the event-dispatching thread.
-	 */
-	private static void createAndShowGUI() {
-		// Create and set up the window.
-		JFrame frame = new JFrame("HelloWorldSwing");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		ImagePanel image = new ImagePanel(R.images.airplane);
-		frame.getContentPane().add(image);
-
-		// Display the window.
-		frame.pack();
-		frame.setVisible(true);
-	}
 
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
@@ -38,7 +20,8 @@ public class Main {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				createAndShowGUI();
+				Visualizer visualizer = new Visualizer(args);
+				visualizer.createAndShowGUI();
 			}
 		});
 	}
