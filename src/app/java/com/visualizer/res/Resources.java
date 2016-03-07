@@ -19,11 +19,8 @@ public class Resources {
 	public static Image getImage(Resource res) {
 		Image img = null;
 		try {
-			System.out.println("img: " + img);
-			img = ImageIO.read(Resources.class.getResource(res.getPath()));
-			System.out.println("img2: " + img);
+			img = ImageIO.read(Resources.class.getClassLoader().getResource(res.getPath()));
 		} catch (IOException e) {
-			System.out.println("caught exception: " + e);
 			throw new UncheckedIOException(e);
 		}
 		return img;

@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 sourceSets {
-    app.java.srcDirs += 'src/gen/java'
+    app.java.srcDirs += ['src/gen/java', 'src/main/java']
 }
 
 ext.sharedManifest = manifest {
